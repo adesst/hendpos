@@ -2,6 +2,7 @@ from flask import render_template, request, session, flash, redirect
 from app import *
 from flask.ext.babel import lazy_gettext
 import datetime
+import traceback, logging
 
 POST_FORM_LABEL = 0
 POST_FORM_VALUE = 1
@@ -34,7 +35,7 @@ def login():
         flash(lazy_gettext('Hello %s' %str(user[0])))
         if url_query.has_key('next'):
             next_url = url_query['next']
-        return redirect(next_url)
+        return redirect(u'%s' %next_url)
     else:
         session['AuthUser'] = {'id' : 1}
         return render_template('default/login.html')
@@ -44,7 +45,7 @@ def login():
 def user_new():
     db_session.rollback()
     error_message = []
-    #form = FieldSet(User)
+    form = FieldSet(User)
     form_data = None
     if request.form :
         form_data = dict(request.form.items())
@@ -67,24 +68,40 @@ def user_new():
                     return str(message)
             except Exception, e:
                 db_session.rollback()
-                error_message.append("Error %s %s" %(str(e), type(e)) )
+                if isinstance(e, IntegrityError ):
+                    message = lazy_gettext('Error: Email has been taken')
+                else:
+                    message = "Error: %s %s" %(e, type(e))
+                logging.error('%s %s' %(traceback.print_exc(), message))
+                error_message.append( message )
         else:
             pass
     return render_template('default/user_new.html', error_message = error_message, form = form_data or None)
 
 
-@app.route('/user/edit/<id>/<email>')
+@app.route('/user/edit/<id>')
 @app.route('/user/edit/', methods=['POST'])
 @login_required()
-def user_edit(id=None, email=None):
+def user_edit(id=None):
     if request.form :
         return 'Form is not empty'
         # redirect to user_view
     else:
         # read the DB
+        message = ''
+        obj = User.query.filter_by(id=id).first()
         # set the form
-        message = {'id' : id, 'email' : email}
-        return render_template('default/user_edit.html', message = message, form=None)
+        return render_template('default/user_edit.html', message = message, form=obj)
+
+@app.route('/user/view/<email>')
+@login_required()
+def user_view(email=None):
+    if email == None:
+        return redirect(url_for('user_list'))
+    else:
+        obj = User.query.filter_by(email=email).first()
+        print form
+        return 'Hello'
 
 @app.route('/user/renew_card/<id>')
 @app.route('/user/renew_card/<id>/<card_id>')
@@ -98,10 +115,6 @@ def user_renew_card(id, card_id = None):
 
 @app.route('/user/delete/<id>')
 def user_delete(id):
-    pass
-
-@app.route('/user/view/id')
-def user_view(id):
     pass
 
 @app.route('/user/list')

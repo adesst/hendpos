@@ -31,6 +31,28 @@
         <button type="submit" class="btn">Submit</button>
     </fieldset>
 </form>
-<fieldset class="log">
+<fieldset id="log">
     <legend> {{ _('Card System') }}</legend>
 </fieldset>
+<script type="text/javascript" src="{{ url_for('static', filename='jquery.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='script.js') }}"></script>
+<script>
+var re_response = /[^E].*"card": "(.*)".*/;
+function onMessage(evt)
+{
+    var card_id = evt.data.replace(re_response,"$1");
+    if ( evt.data.match(re_response) )
+    {
+        jQuery("input[name='card_uid']").val(card_id);
+    }
+    writeToScreen('<span style="color: blue;">RESPONSE: ' + evt.data+'</span>');
+}
+
+jQuery(document).ready(function(){
+    output = document.getElementById("log");
+    jQuery("button#reconnect").click(function(){ testWebSocket(); });
+    jQuery("input[name='card_uid']").focus(function(){ doSend("{'mode': 'get_card_id'}"); });
+    jQuery("input[name='card_uid']").click(function(){ doSend("{'mode': 'get_card_id'}"); });
+    testWebSocket();
+});
+</script>

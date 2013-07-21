@@ -32,14 +32,10 @@
 <script type="text/javascript" src="{{ url_for('static', filename='jquery.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='script.js') }}"></script>
 <script>
-    function init()
-    {
-        output.log = document.getElementById("log");
-        output.status = document.getElementById("status");
-        jQuery("button#reconnect").click(function(){ testWebSocket(); });
-        testWebSocket();
-        doSend("{'mode': 'get_card_id'}");
-    }
-    window.addEventListener("load", init, false);
+var output = '';
+window.addEventListener("load", init, false);
+$("#new").click(function(){
+  window.location = "{{ url_for('user_new') }}"
+});
 </script>
 </html>
