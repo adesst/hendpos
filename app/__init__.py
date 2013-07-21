@@ -1,3 +1,4 @@
+import logging
 import os
 import sys
 import datetime
@@ -16,6 +17,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///hendpos.db'
 app.secret_key = os.urandom(24)
 app.debug = True
 babel = Babel(app)
+logging.basicConfig(level=logging.DEBUG, format="%(asctime)s %(msg)s", filename="log.txt")
 
 def login_required(url = None):
     def decorator(fn):
@@ -48,7 +50,6 @@ def my_app(environ, start_response):
         handle_websocket(environ["wsgi.websocket"])
     else:
         return app(environ, start_response)
-
 
 import views
 
