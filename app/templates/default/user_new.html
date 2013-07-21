@@ -1,0 +1,36 @@
+{% for err in error_message: %}
+    <div class="error">{{ err }}</div>
+{% endfor %}
+<form action="{{ url_for('user_new') }}" method="post">
+    <fieldset>
+        <legend> {{ _('Form') }}</legend>
+        <div >
+            <label> {{ _('Username') }} </label>
+            <input type="text" value="{{ form['username'] or '' }}" name="username" placeholder="{{ _('Required') }}" />
+        </div>
+        <div>
+            <label> {{ _('Name') }} </label>
+            <input type="text" value="{{ form['name'] or '' }}" name="name" placeholder="{{ _('Required') }}" />
+        </div>
+        <div>
+            <label> {{ _('Email') }} </label>
+            <input type="text" value="{{ form['email'] or '' }}" name="email" placeholder="{{ _('Required') }}" />
+        </div>
+        <div>
+            <label> {{ _('Card No') }} </label>
+            <input type="text" value="{{ form['card_no'] or '' }}" name="card_no" placeholder="{{ _('Required') }}" />
+        </div>
+        <div>
+            <label> {{ _('Card UID') }} </label>
+            <input type="text" value="{{ form['card_uid'] or '' }}" name="card_uid" placeholder="{{ _('Tap the card') }}" />
+        </div>
+        <div>
+            <label> {{ _('Balance') }} </label>
+            <input type="text" value="{{ form['balance'] or '' }}" name="balance" placeholder="{{ _('Insert if any') }}" />
+        </div>
+        <button type="submit" class="btn">Submit</button>
+    </fieldset>
+</form>
+<fieldset class="log">
+    <legend> {{ _('Card System') }}</legend>
+</fieldset>

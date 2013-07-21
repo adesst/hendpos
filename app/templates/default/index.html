@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+</head>
+<body>
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <ul class="flashes">
+        {% for message in messages  %}
+            <li>{{ message }} </li>
+        {% endfor  %}
+        </ul>
+    {% endif %}
+{% endwith%}
+<div class="main_app" style="float: left; border: black solid 1px; border-right: none;">
+<p>{{ _("Welcome HenPos System") }}</p>
+<p id="status"></p>
+<button id="check_uid" type="button">Check Card</button>
+<button id="sell" type="button">Sell</button>
+<button id="top_up" type="button">Top Up</button>
+<button id="new" type="button">Register</button>
+<button id="renew" type="button">Renew</button>
+<button id="close" type="button">Close</button>
+<button id="reconnect" type="button">Reconnect</button>
+</div>
+<div class="log_window" style="float: left; border: black solid 1px; height: 400px; overflow: auto;">
+    <p> {{ _('Window Log') }} </p>
+    <div id="log"></div>
+</div>
+</body>
+<script type="text/javascript" src="{{ url_for('static', filename='jquery.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='script.js') }}"></script>
+<script>
+    function init()
+    {
+        output.log = document.getElementById("log");
+        output.status = document.getElementById("status");
+        jQuery("button#reconnect").click(function(){ testWebSocket(); });
+        testWebSocket();
+        doSend("{'mode': 'get_card_id'}");
+    }
+    window.addEventListener("load", init, false);
+</script>
+</html>
