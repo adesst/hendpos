@@ -1,10 +1,9 @@
 var wsUri = "ws://localhost:5000/websocket";
-var output = {'log' : false, 'status' : false,};
+var output = '';
 
 function init()
 {
-  output.log = document.getElementById("log");
-  output.status = document.getElementById("status");
+  output = document.getElementById("log");
   jQuery("button#check_uid").click(function(){ doSend("{'mode': 'check_uid'}"); });
   jQuery("button#sell").click(function(){ doSend("{'mode': 'sell'}"); });
   jQuery("button#top_up").click(function(){ doSend("{'mode': 'top_up'}"); });
@@ -26,40 +25,38 @@ function testWebSocket()
 
 function onOpen(evt)
 {
-  writeToScreen("CONNECTED", output.status);
+  writeToScreen("CONNECTED");
   doSend("{'mode' : 'init'}");
 }
 
 function onClose(evt)
 {
-  writeToScreen("DISCONNECTED", output.status);
+  writeToScreen("DISCONNECTED");
 }
 
 function onMessage(evt)
 {
-  writeToScreen('<span style="color: blue;">RESPONSE: ' + evt.data+'</span>', output.log);
+  writeToScreen('<span style="color: blue;">RESPONSE: ' + evt.data+'</span>');
   //websocket.close();
 }
 
 function onError(evt)
 {
-  writeToScreen('<span style="color: red;">ERROR:</span> ' + evt.data, output.status);
+  writeToScreen('<span style="color: red;">ERROR:</span> ' + evt.data);
 }
 
 function doSend(message)
 {
-  writeToScreen("SENT: " + message, output.log); 
-  websocket.send(message);
+    writeToScreen("SENT: " + message); 
+    websocket.send(message);
 }
 
-function writeToScreen(message, screen)
+function writeToScreen(message)
 {
   var pre = document.createElement("p");
   pre.style.wordWrap = "break-word";
   pre.innerHTML = message;
-  screen.appendChild(pre);
+  output.appendChild(pre);
 }
 
-$("#new").click(function(){
-  window.location = "{{ url_for('user_new') }}"
-});
+
