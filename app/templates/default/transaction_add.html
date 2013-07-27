@@ -8,11 +8,11 @@
         <input type="hidden" value="{{ txtype_id }}" name="txtype_id" />
         <div >
             <label> {{ _('Card Uid') }} </label>
-            <input type="text" value="{{ form['card_uid'] or '' }}" name="card_uid" placeholder="{{ _('Required, tap the card') }}" />
+            <input type="text" value="{{ form['card_uid'] or '' }}" name="card_uid" readonly="readonly" />
         </div>
         <div >
             <label> {{ _('Balance') }} </label>
-            <input type="text" value="{{ form['balance'] or '' }}" name="balance" placeholder="{{ _('Required') }}" />
+            <input type="text" value="{{ form['balance'] or '' }}" name="balance" readonly="readonly" />
         </div>
         <div>
             <label> {{ _('Amount') }} </label>
@@ -21,13 +21,11 @@
         <button type="submit" class="btn">Submit</button>
     </fieldset>
 </form>
-<fieldset id="log">
-    <legend> {{ _('Card System') }}</legend>
-</fieldset>
 <script type="text/javascript" src="{{ url_for('static', filename='jquery.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='script.js') }}"></script>
 <script>
 var re_response = /[^E].*"card": "(.*)".*/;
+var index = 1;
 function onMessage(evt)
 {
     var card_id = evt.data.replace(re_response,"$1");
@@ -36,6 +34,46 @@ function onMessage(evt)
         jQuery("input[name='card_uid']").val(card_id);
     }
     writeToScreen('<span style="color: blue;">RESPONSE: ' + evt.data+'</span>');
+
+    if ( index > 10 )
+    {
+        $("#log").html('');
+        index = 0;
+    }
+    index++;
+}
+
+function filterAmount()
+{
+    var balance = parseFloat($("[name='balance']").val());
+    var amount = parseFloat($("[name='amount']").val());
+    var flag = true;
+    if ( amount > balance )
+    {
+        alert("{{ _('Error: Amount is greater than Balance') }}");
+        flag = false;
+    }
+    else if ( amount <= 0 )
+    {
+        alert("{{ _('Error: Amount is 0 or bad value') }}");
+        flag = false;
+    }
+    else if ( isNaN(amount))
+    {
+        alert("{{ _('Error: Amount is 0 or bad value') }}");
+        flag = false;
+    }
+    
+    if ( flag )
+    {
+        return true;
+    }
+    else
+    {
+        $("[name='amount']").val('');
+        $("[name='amount']").focus();
+        return false;
+    }
 }
 
 jQuery(document).ready(function(){
@@ -44,25 +82,14 @@ jQuery(document).ready(function(){
     jQuery("input[name='card_uid']").focus(function(){ doSend("{'mode': 'get_card_id'}"); });
     jQuery("input[name='card_uid']").click(function(){ doSend("{'mode': 'get_card_id'}"); });
     testWebSocket();
-
+    jQuery("[name='amount']").focus();
     jQuery("form").submit(function(){
-        var balance = parseFloat($("[name='balance']").val());
-        var amount = parseFloat($("[name='amount']").val());
-
-        if ( amount > balance )
+        var txtype_id = $("[name='txtype_id']").val();
+        if ( txtype_id.length == 2)
         {
-            alert({{ _('Error: Amount is greater than Balance') }});
-            return false;
+            return filterAmount();
         }
-        else if ( amount <= 0 )
-        {
-            alert({{ _('Error: Amount is 0 or bad value') }});
-            return false;
-        }
-        else
-        {
-            return true;
-        }
+        return true;
     });
 });
 </script>

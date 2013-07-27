@@ -1,4 +1,11 @@
 {% include 'default/flash.html' %}
+<fieldset id="legend">
+    <legend> {{ _('Legend') }}</legend>
+    <label>{{ _('Press F1 for Home') }}</label>
+    <br />
+    <label>{{ _('Press F2 for Retry the Card Reader') }}</label>
+</fieldset>
+
 {% set Balance = 0 %}
 {% set User = 1 %}
 <fieldset>

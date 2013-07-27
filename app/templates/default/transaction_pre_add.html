@@ -4,15 +4,22 @@
 {% endfor %}
 <form action="{{ url_for('transaction_add') }}" method="post">
     <fieldset>
-        <legend> {{ _('Form') }}</legend>
+        <legend> {{ _('Form of ') }}{{ str_txtype }}</legend>
         <input type="hidden" value="{{ txtype }}" name="txtype_id" />
         <div >
             <label> {{ _('Card UID') }} </label>
-            <input type="text" name="card_uid" placeholder="{{ _('Required, tap the card') }}" />
+            <input type="text" id="card_uid" name="card_uid" placeholder="{{ _('Required, tap the card') }}" />
         </div>
         <button type="submit" class="btn">Submit</button>
     </fieldset>
 </form>
+<fieldset id="legend">
+    <legend> {{ _('Legend') }}</legend>
+    <label>{{ _('Press F1 for Home') }}</label>
+    <br />
+    <label>{{ _('Press F2 for Retry the Card Reader') }}</label>
+</fieldset>
+
 <fieldset id="log">
     <legend> {{ _('Card System') }}</legend>
 </fieldset>
@@ -20,22 +27,54 @@
 <script type="text/javascript" src="{{ url_for('static', filename='script.js') }}"></script>
 <script>
 var re_response = /[^E].*"card": "(.*)".*/;
+var get_card_uid_message = "{'mode': 'get_card_id'}"
+var index = 0;
+
 function onMessage(evt)
 {
     var card_id = evt.data.replace(re_response,"$1");
     if ( evt.data.match(re_response) )
     {
         jQuery("input[name='card_uid']").val(card_id);
+        websocket.close();
         jQuery("form").submit();
     }
+    else
+    {
+        setTimeout(getCardUID,1000);
+    }
     writeToScreen('<span style="color: blue;">RESPONSE: ' + evt.data+'</span>');
+
+    if ( index > 100 )
+    {
+        $("#log p").remove();
+        index = 0;
+    }
+    index++;
 }
 
 jQuery(document).ready(function(){
     output = document.getElementById("log");
     jQuery("button#reconnect").click(function(){ testWebSocket(); });
-    jQuery("input[name='card_uid']").focus(function(){ doSend("{'mode': 'get_card_id'}"); });
-    jQuery("input[name='card_uid']").click(function(){ doSend("{'mode': 'get_card_id'}"); });
     testWebSocket();
+
+    jQuery('body, input').keypress(function(evt){
+        if ( evt.keyCode == Keys._F1 )
+        {
+            window.location = "{{ url_for('index') }}";
+        }
+        if ( evt.keyCode == Keys._F2 )
+        {
+            testWebSocket();
+        }
+    });
+
+    jQuery("#card_uid").focus();
+    doSend(get_card_uid_message);
 });
+
+function getCardUID()
+{
+    websocket.send(get_card_uid_message);
+}
 </script>

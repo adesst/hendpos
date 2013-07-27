@@ -1,5 +1,5 @@
 from flaskext.babel import Babel, gettext
-from sqlalchemy import Column, Integer, String, Date, Enum, Float, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, Date, Enum, Float, DateTime, ForeignKey, and_, or_, desc
 from database import Base
 
 REGISTERED_USER = 90

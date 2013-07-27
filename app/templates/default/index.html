@@ -8,22 +8,24 @@
 <div class="main_app" style="float: left; border: black solid 1px; border-right: none;">
 <p>{{ _("Welcome HenPos System") }}</p>
 <p id="status"></p>
-<button id="sell" type="button">{{ _('Sell') }}</button>
-<button id="top_up" type="button">{{ _('Top Up') }}</button>
-<button id="attendance" type="button">{{ _('Attendance') }}</button>
-<button id="transactions" type="button">{{ _('Transactions') }}</button>
-<button id="new" type="button">{{ _('Register') }}</button>
-<button id="users" type="button">{{ _('Users') }}</button>
-<button id="reconnect" type="button">{{ _('Reconnect') }}</button>
+<button id="sell" type="button">{{ _('Sell [F1]') }}</button>
+<button id="top_up" type="button">{{ _('Top Up [F2]') }}</button>
+<button id="transactions" type="button">{{ _('Tx.Mutations [F3]') }}</button>
+<button id="new" type="button">{{ _('Register [F4]') }}</button>
+<button id="users" type="button">{{ _('Users [F9]') }}</button>
 </div>
-<div class="log_window" style="float: left; border: black solid 1px; height: 400px; overflow: auto;">
+<div class="log_window" style="float: left; border: black solid 1px; height: 500px; width: 800px; overflow: auto;">
     <p> {{ _('Window Log') }} </p>
     <div id="log"></div>
+    <div id="history"></div>
 </div>
 </body>
 <script type="text/javascript" src="{{ url_for('static', filename='jquery.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='script.js') }}"></script>
 <script>
+{% set TOP_UP = 1 %}
+{% set SELL = 11 %}
+{% set ATTENDANCE = 2 %}
 var output = '';
 window.addEventListener("load", init, false);
 $("#new").click(function(){
@@ -41,5 +43,34 @@ $("#attendance").click(function(){
   {#  where 2 is Attendance Credit  #}
   window.location = "{{ url_for('transaction_pre_add', txtype='2') }}"
 });
+$("#users").click(function(){
+  window.location = "{{ url_for('user_list') }}"
+});
+
+jQuery("#history").load("{{ url_for('poslog_list') }}");
+
+jQuery('body, input').keypress(function(evt){
+    if ( evt.keyCode == Keys._F1 )
+    {
+        window.location = "{{ url_for('transaction_pre_add', txtype=SELL) }}";
+    }
+    if ( evt.keyCode == Keys._F2 )
+    {
+        window.location = "{{ url_for('transaction_pre_add', txtype=TOP_UP) }}";
+    }
+    if ( evt.keyCode == Keys._F3 )
+    {
+        window.location = "{{ url_for('transaction_list') }}";
+    }
+    if ( evt.keyCode == Keys._F4 )
+    {
+        window.location = "{{ url_for('user_new') }}";
+    }
+    if ( evt.keyCode == Keys._F9 )
+    {
+        window.location = "{{ url_for('user_list') }}";
+    }
+});
+</script>
 </script>
 </html>

@@ -1,0 +1,16 @@
+{% autoescape false %}
+<table border="1" class="dedeq">
+    <th> No </th>
+    <th> {{ _('Date') }} </th>
+    <th> {{ _('Message') }} </th>
+    {% set counter = 1 %}
+    {% for mutation in mutations %}
+        <tr>
+            <td> {{ counter }}</td>
+            <td> {{ mutation['tr_date'] }}</td>
+            <td> {{ mutation['message'] }}</td>
+        </tr>
+        {% set counter = counter + 1 %}
+    {% endfor %}
+</table>
+{% endautoescape %}

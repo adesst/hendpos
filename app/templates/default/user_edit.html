@@ -10,14 +10,6 @@
             <input type="text" value="{{ form['username'] or '' }}" name="username" placeholder="{{ _('Required') }}" />
         </div>
         <div>
-            <label> {{ _('Name') }} </label>
-            <input type="text" value="{{ form['name'] or '' }}" name="name" placeholder="{{ _('Required') }}" />
-        </div>
-        <div>
-            <label> {{ _('Email') }} </label>
-            <input type="text" value="{{ form['email'] or '' }}" name="email" placeholder="{{ _('Required') }}" />
-        </div>
-        <div>
             <label> {{ _('Card No') }} </label>
             <input type="text" value="{{ form['card_no'] or '' }}" name="card_no" placeholder="{{ _('Required') }}" />
         </div>
@@ -36,3 +28,19 @@
         <button type="submit" class="btn">Submit</button>
     </fieldset>
 </form>
+<fieldset id="legend">
+    <legend> {{ _('Legend') }}</legend>
+    <label>{{ _('Press F1 for Home') }}</label>
+</fieldset>
+<script type="text/javascript" src="{{ url_for('static', filename='jquery.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='script.js') }}"></script>
+<script>
+jQuery(document).ready(function(){
+    jQuery('body, input').keypress(function(evt){
+        if ( evt.keyCode == Keys._F1 )
+        {
+            window.location = "{{ url_for('index') }}";
+        }
+    });
+});
+</script>

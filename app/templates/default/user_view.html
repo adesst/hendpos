@@ -33,7 +33,10 @@
         <input type="text" value="{{ user['date_create'] or '' }}" name="date_create" readonly="readonly" />
     </div>
 </fieldset>
-
+<fieldset id="legend">
+    <legend> {{ _('Legend') }}</legend>
+    <label>{{ _('Press F1 for Home') }}</label>
+</fieldset>
 <fieldset>
     <legend> History </legend>
     <table border="1" class="dedeq">
@@ -57,3 +60,15 @@
         {% endfor %}
     </table>
 </fieldset>
+<script type="text/javascript" src="{{ url_for('static', filename='jquery.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='script.js') }}"></script>
+<script>
+jQuery(document).ready(function(){
+    jQuery('body, input').keypress(function(evt){
+        if ( evt.keyCode == Keys._F1 )
+        {
+            window.location = "{{ url_for('index') }}";
+        }
+    });
+});
+</script>

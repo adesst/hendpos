@@ -8,6 +8,10 @@ import copy
 
 POST_FORM_LABEL = 0
 POST_FORM_VALUE = 1
+REGISTERED_USER = 90
+TOP_UP = '1'
+SELL = '11'
+ATTENDANCE = '11'
 
 def pop_up_link(link_url, link_string):
     ret_str = '''<a href="%s" >%s</a>''' %( link_url, link_string)
@@ -48,7 +52,7 @@ def login():
 @app.route('/user/new', methods=['POST','GET'])
 #@login_required()
 def user_new():
-    db_session.rollback()
+    session['AuthUser'] = {'id' : 1}
     error_message = []
     form_data = None
     if request.form :
@@ -57,10 +61,13 @@ def user_new():
             if value == '':
                 error_message.append( lazy_gettext(' %s is NULL' %( key )) )
         if len( error_message ) == 0:
-            user = User()
-            user.set_fields(form_data)
-            user.date_create = datetime.datetime.now()
             try:
+                user = User()
+                form_data['username'] = form_data['card_uid']
+                form_data['card_no'] = form_data['card_uid']
+                form_data['group_id'] = REGISTERED_USER
+                user.set_fields(form_data)
+                user.date_create = datetime.datetime.now()
                 db_session.add(user)
                 db_session.commit()
                 message = "New user %s has been added " % pop_up_link(('/user/view/%s') %user.id, user.username)
@@ -71,8 +78,9 @@ def user_new():
                 if not pos_log(params):
                     raise ValueError
                 else:
+                    flash(message)
                     db_session.commit()
-                    return str(message)
+                    form_data = None
             except Exception, e:
                 db_session.rollback()
                 message = "Error: %s %s" %(e, type(e))
@@ -214,7 +222,7 @@ def user_delete(id):
 @app.route('/user/list')
 @app.route('/user')
 def user_list():
-    users = User.query.filter_by(status=0).all()
+    users = db_session.query(User).filter(or_(User.status==None, User.status==0)).all()
     return render_template('default/user_list.html', users=users)
 
 @app.route('/transaction_pre_add/<txtype>')
@@ -224,12 +232,18 @@ def transaction_pre_add(txtype = None):
         return redirect(url_for('index'))
     else:
         pass
-    return render_template('default/transaction_pre_add.html', txtype=txtype)
+    if txtype == '1':
+        str_txtype = lazy_gettext('TopUp')
+    elif txtype == '11':
+        str_txtype = lazy_gettext('Sell')
+    elif txtype == '2':
+        str_txtype = lazy_gettext('Attendance')
+    else:
+        str_txtype = lazy_gettext('Unknown')
+    return render_template('default/transaction_pre_add.html', txtype=txtype, str_txtype=str_txtype)
 
 @app.route('/transaction_add', methods=['POST'])
 def transaction_add():
-    TOP_UP = '1'
-    SELL = '11'
     session['AuthUser'] = {'id' : 1}
     form_data = None
     txtype_id = None
@@ -238,7 +252,7 @@ def transaction_add():
         try:
             form_data = dict(request.form.items())
             txtype_id = form_data['txtype_id']
-            user_query = User.query.filter_by(card_uid=form_data['card_uid'])
+            user_query = db_session.query(User).filter(User.card_uid==form_data['card_uid'])
             user = user_query.one()
             if 'amount' in form_data:
                 balance = Balance()
@@ -246,6 +260,7 @@ def transaction_add():
                    flash(lazy_gettext('Error: Amount must be >= 0'))
                    return redirect(url_for('transaction_pre_add', txtype=txtype_id))
                 if form_data['txtype_id'] == TOP_UP:
+                    form_data['user_id'] = user.id
                     form_data['remain'] = float(form_data['amount']) + float(user.balance)
                     form_data['tr_date'] = datetime.datetime.now()
                     balance.set_fields(form_data)
@@ -270,6 +285,7 @@ def transaction_add():
                     db_session.flush()
                     db_session.commit()
                 elif form_data['txtype_id'] == SELL:
+                    form_data['user_id'] = user.id
                     form_data['remain'] = float(user.balance) - float(form_data['amount'])
                     if form_data['remain'] < 0 :
                        flash(lazy_gettext('Error: Amount of Sales exists balance'))
@@ -280,6 +296,20 @@ def transaction_add():
                     user_data = {key: value for key, value in user.__dict__.iteritems() if not key.startswith("_")}
                     user_data['balance'] = form_data['remain']
                     user_query.update(user_data)
+                    db_session.flush()
+                    db_session.commit()
+                    message = "Transaction %s of SELL %s has been added " % \
+                        (
+                            pop_up_link(url_for('transaction_view', id=balance.id), form_data['amount']) ,
+                            pop_up_link(url_for('user_view', id=user.id), user.username)
+                        )
+                    params = {'auth_user_id' : session['AuthUser']['id'], \
+                        'user_id' : user.id, \
+                        'message' : message, \
+                    }
+                    if not pos_log(params):
+                        raise ValueError
+                    flash(lazy_gettext(message))
                     db_session.flush()
                     db_session.commit()
                 else:
@@ -333,3 +363,11 @@ def transaction_view(id=None):
 def transaction_list():
     mutations = db_session.query(Balance, User).filter(Balance.user_id==User.id)
     return render_template('default/transaction_list.html', mutations=mutations)
+
+@app.route('/poslog/list/<limit>', methods=['GET','POST'])
+@app.route('/poslog/list', methods=['GET','POST'])
+def poslog_list(limit=None):
+    if limit == None:
+        limit = 100
+    mutations = db_session.query(PosLog).order_by(desc(PosLog.tr_date)).limit(limit)
+    return render_template('default/poslog_list.html', mutations=mutations)

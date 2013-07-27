@@ -1,4 +1,8 @@
 {% include 'default/flash.html' %}
+<fieldset id="legend">
+    <legend> {{ _('Legend') }}</legend>
+    <label>{{ _('Press F1 for Home') }}</label>
+</fieldset>
 
 <table border="1" class="dedeq">
     <th> No </th>
@@ -27,3 +31,15 @@
     {% set index = index + 1 %}
     {% endfor %}
 </table>
+<script type="text/javascript" src="{{ url_for('static', filename='jquery.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='script.js') }}"></script>
+<script>
+jQuery(document).ready(function(){
+    jQuery('body, input').keypress(function(evt){
+        if ( evt.keyCode == Keys._F1 )
+        {
+            window.location = "{{ url_for('index') }}";
+        }
+    });
+});
+</script>
