@@ -1,9 +1,10 @@
-{{ message }}
+{% include 'default/flash.html' %}
 {% for err in error_message: %}
     <div class="error">{{ err }}</div>
 {% endfor %}
 <form action="{{ url_for('user_edit') }}" method="post">
     <fieldset>
+        <input type="hidden" value="{{ form['id'] or '' }}" name="id" />
         <div >
             <label> {{ _('Username') }} </label>
             <input type="text" value="{{ form['username'] or '' }}" name="username" placeholder="{{ _('Required') }}" />
@@ -27,6 +28,10 @@
         <div>
             <label> {{ _('Balance') }} </label>
             <input type="text" value="{{ form['balance'] or '' }}" name="balance" placeholder="{{ _('Insert if any') }}" />
+        </div>
+        <div>
+            <label> {{ _('Date Create') }} </label>
+            <input type="text" value="{{ form['date_create'] or '' }}" name="date_create" readonly="readonly" />
         </div>
         <button type="submit" class="btn">Submit</button>
     </fieldset>

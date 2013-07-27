@@ -4,25 +4,17 @@
     <meta charset="utf-8">
 </head>
 <body>
-{% with messages = get_flashed_messages() %}
-    {% if messages %}
-        <ul class="flashes">
-        {% for message in messages  %}
-            <li>{{ message }} </li>
-        {% endfor  %}
-        </ul>
-    {% endif %}
-{% endwith%}
+{% include 'default/flash.html' %}
 <div class="main_app" style="float: left; border: black solid 1px; border-right: none;">
 <p>{{ _("Welcome HenPos System") }}</p>
 <p id="status"></p>
-<button id="check_uid" type="button">Check Card</button>
-<button id="sell" type="button">Sell</button>
-<button id="top_up" type="button">Top Up</button>
-<button id="new" type="button">Register</button>
-<button id="renew" type="button">Renew</button>
-<button id="close" type="button">Close</button>
-<button id="reconnect" type="button">Reconnect</button>
+<button id="sell" type="button">{{ _('Sell') }}</button>
+<button id="top_up" type="button">{{ _('Top Up') }}</button>
+<button id="attendance" type="button">{{ _('Attendance') }}</button>
+<button id="transactions" type="button">{{ _('Transactions') }}</button>
+<button id="new" type="button">{{ _('Register') }}</button>
+<button id="users" type="button">{{ _('Users') }}</button>
+<button id="reconnect" type="button">{{ _('Reconnect') }}</button>
 </div>
 <div class="log_window" style="float: left; border: black solid 1px; height: 400px; overflow: auto;">
     <p> {{ _('Window Log') }} </p>
@@ -36,6 +28,18 @@ var output = '';
 window.addEventListener("load", init, false);
 $("#new").click(function(){
   window.location = "{{ url_for('user_new') }}"
+});
+$("#top_up").click(function(){
+  {#  where 1 is Credit  #}
+  window.location = "{{ url_for('transaction_pre_add', txtype='1') }}"
+});
+$("#sell").click(function(){
+  {#  where 11 is Debit  #}
+  window.location = "{{ url_for('transaction_pre_add', txtype='11') }}"
+});
+$("#attendance").click(function(){
+  {#  where 2 is Attendance Credit  #}
+  window.location = "{{ url_for('transaction_pre_add', txtype='2') }}"
 });
 </script>
 </html>

@@ -1,0 +1,30 @@
+{% include 'default/flash.html' %}
+{% set Balance = 0 %}
+{% set User = 1 %}
+<fieldset>
+    <legend> {{ _('Form') }}</legend>
+    <div >
+        <label> {{ _('Card Uid') }} </label>
+        <input type="text" value="{{ form[Balance]['card_uid'] or '' }}" name="card_uid" />
+    </div>
+    <div >
+        <label> {{ _('Username') }} </label>
+        <input type="text" value="{{ form[User]['username'] or '' }}" id="username" readonly="readonly" />
+    </div>
+    <div >
+        <label> {{ _('Balance') }} </label>
+        <input type="text" value="{{ form[Balance]['balance'] or '' }}" readonly="readonly" />
+    </div>
+    <div>
+        <label> {{ _('Amount') }} </label>
+        <input type="text" value="{{ form[Balance]['amount'] or '' }}" name="amount" />
+    </div>
+    <div >
+        <label> {{ _('Remain') }} </label>
+        <input type="text" value="{{ form[Balance]['remain'] or '' }}" />
+    </div>
+    <div>
+        <label> {{ _('TxType') }} </label>
+        <input type="text" value="{{ form[Balance]['txtype_id'] or '' }}" name="txtype_id" readonly="readonly" />
+    </div>
+</fieldset>

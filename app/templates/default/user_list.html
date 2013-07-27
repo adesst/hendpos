@@ -1,0 +1,29 @@
+{% include 'default/flash.html' %}
+
+<table border="1" class="dedeq">
+    <th> No </th>
+    <th> {{ _('Username') }} </th>
+    <th> {{ _('Card No') }} </th>
+    <th> {{ _('Card UID') }} </th>
+    <th> {{ _('Balance') }} </th>
+    <th> {{ _('Create Date') }} </th>
+    <th> {{ _('Action') }} </th>
+    {% set index = 1 %}
+    {% for user in users %}
+        <tr>
+            <td>{{ index }}</td> 
+            <td>{{ user['username'] }}</td> 
+            <td>{{ user['card_no'] }}</td> 
+            <td>{{ user['card_uid'] }}</td> 
+            <td>{{ user['balance'] }}</td> 
+            <td>{{ user['date_create'] }}</td> 
+            <td>
+                <a target="_blank" href="{{ url_for('user_view', id=user['id']) }}">{{ _('View') }}</a>
+                <a target="_blank" href="{{ url_for('user_edit', id=user['id']) }}">{{ _('Edit') }}</a>
+                <a target="_blank" href="{{ url_for('user_delete', id=user['id']) }}">{{ _('Delete') }}</a>
+                <a target="_blank" href="{{ url_for('user_renew_card', id=user['id']) }}">{{ _('Renew Card') }}</a>
+                </td> 
+        </tr>
+    {% set index = index + 1 %}
+    {% endfor %}
+</table>

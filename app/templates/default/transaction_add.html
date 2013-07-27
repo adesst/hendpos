@@ -2,32 +2,21 @@
 {% for err in error_message: %}
     <div class="error">{{ err }}</div>
 {% endfor %}
-<form action="{{ url_for('user_new') }}" method="post">
+<form action="{{ url_for('transaction_add' ) }}" method="post">
     <fieldset>
         <legend> {{ _('Form') }}</legend>
+        <input type="hidden" value="{{ txtype_id }}" name="txtype_id" />
         <div >
-            <label> {{ _('Username') }} </label>
-            <input type="text" value="{{ form['username'] or '' }}" name="username" placeholder="{{ _('Required') }}" />
+            <label> {{ _('Card Uid') }} </label>
+            <input type="text" value="{{ form['card_uid'] or '' }}" name="card_uid" placeholder="{{ _('Required, tap the card') }}" />
         </div>
-        <div>
-            <label> {{ _('Name') }} </label>
-            <input type="text" value="{{ form['name'] or '' }}" name="name" placeholder="{{ _('Required') }}" />
-        </div>
-        <div>
-            <label> {{ _('Email') }} </label>
-            <input type="text" value="{{ form['email'] or '' }}" name="email" placeholder="{{ _('Required') }}" />
-        </div>
-        <div>
-            <label> {{ _('Card No') }} </label>
-            <input type="text" value="{{ form['card_no'] or '' }}" name="card_no" placeholder="{{ _('Required') }}" />
-        </div>
-        <div>
-            <label> {{ _('Card UID') }} </label>
-            <input type="text" value="{{ form['card_uid'] or '' }}" name="card_uid" placeholder="{{ _('Tap the card') }}" />
-        </div>
-        <div>
+        <div >
             <label> {{ _('Balance') }} </label>
-            <input type="text" value="{{ form['balance'] or '' }}" name="balance" placeholder="{{ _('Insert if any') }}" />
+            <input type="text" value="{{ form['balance'] or '' }}" name="balance" placeholder="{{ _('Required') }}" />
+        </div>
+        <div>
+            <label> {{ _('Amount') }} </label>
+            <input type="text" value="{{ form['amount'] or '' }}" name="amount" placeholder="{{ _('Required') }}" />
         </div>
         <button type="submit" class="btn">Submit</button>
     </fieldset>
@@ -55,5 +44,25 @@ jQuery(document).ready(function(){
     jQuery("input[name='card_uid']").focus(function(){ doSend("{'mode': 'get_card_id'}"); });
     jQuery("input[name='card_uid']").click(function(){ doSend("{'mode': 'get_card_id'}"); });
     testWebSocket();
+
+    jQuery("form").submit(function(){
+        var balance = parseFloat($("[name='balance']").val());
+        var amount = parseFloat($("[name='amount']").val());
+
+        if ( amount > balance )
+        {
+            alert({{ _('Error: Amount is greater than Balance') }});
+            return false;
+        }
+        else if ( amount <= 0 )
+        {
+            alert({{ _('Error: Amount is 0 or bad value') }});
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    });
 });
 </script>

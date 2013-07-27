@@ -1,0 +1,28 @@
+{% include 'default/flash.html' %}
+{% set Balance = 0 %}
+{% set User = 1 %}
+<fieldset>
+    <legend> History </legend>
+    <table border="1" class="dedeq">
+        <th> No </th>
+        <th> {{ _('Date') }} </th>
+        <th> {{ _('Username') }} </th>
+        <th> {{ _('Type') }} </th>
+        <th> {{ _('Balance') }} </th>
+        <th> {{ _('Amount') }} </th>
+        <th> {{ _('Remain') }} </th>
+        {% set counter = 1 %}
+        {% for mutation in mutations %}
+            <tr>
+                <td> {{ counter }}</td>
+                <td> {{ mutation[Balance]['tr_date'] }}</td>
+                <td> {{ mutation[User]['username'] }}</td>
+                <td> {{ mutation[Balance]['txtype_id'] }}</td>
+                <td> {{ mutation[Balance]['balance'] }}</td>
+                <td> {{ mutation[Balance]['amount'] }}</td>
+                <td> {{ mutation[Balance]['remain'] }}</td>
+            </tr>
+            {% set counter = counter + 1 %}
+        {% endfor %}
+    </table>
+</fieldset>

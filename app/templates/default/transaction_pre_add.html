@@ -2,32 +2,13 @@
 {% for err in error_message: %}
     <div class="error">{{ err }}</div>
 {% endfor %}
-<form action="{{ url_for('user_new') }}" method="post">
+<form action="{{ url_for('transaction_add') }}" method="post">
     <fieldset>
         <legend> {{ _('Form') }}</legend>
+        <input type="hidden" value="{{ txtype }}" name="txtype_id" />
         <div >
-            <label> {{ _('Username') }} </label>
-            <input type="text" value="{{ form['username'] or '' }}" name="username" placeholder="{{ _('Required') }}" />
-        </div>
-        <div>
-            <label> {{ _('Name') }} </label>
-            <input type="text" value="{{ form['name'] or '' }}" name="name" placeholder="{{ _('Required') }}" />
-        </div>
-        <div>
-            <label> {{ _('Email') }} </label>
-            <input type="text" value="{{ form['email'] or '' }}" name="email" placeholder="{{ _('Required') }}" />
-        </div>
-        <div>
-            <label> {{ _('Card No') }} </label>
-            <input type="text" value="{{ form['card_no'] or '' }}" name="card_no" placeholder="{{ _('Required') }}" />
-        </div>
-        <div>
             <label> {{ _('Card UID') }} </label>
-            <input type="text" value="{{ form['card_uid'] or '' }}" name="card_uid" placeholder="{{ _('Tap the card') }}" />
-        </div>
-        <div>
-            <label> {{ _('Balance') }} </label>
-            <input type="text" value="{{ form['balance'] or '' }}" name="balance" placeholder="{{ _('Insert if any') }}" />
+            <input type="text" name="card_uid" placeholder="{{ _('Required, tap the card') }}" />
         </div>
         <button type="submit" class="btn">Submit</button>
     </fieldset>
@@ -45,6 +26,7 @@ function onMessage(evt)
     if ( evt.data.match(re_response) )
     {
         jQuery("input[name='card_uid']").val(card_id);
+        jQuery("form").submit();
     }
     writeToScreen('<span style="color: blue;">RESPONSE: ' + evt.data+'</span>');
 }
