@@ -1,3 +1,10 @@
+{% extends 'default/index.html' %}
+
+{% block title %}
+<title>{{ _('User Edit') }}</title>
+{% endblock %}
+
+{% block content %}
 {% include 'default/flash.html' %}
 {% for err in error_message: %}
     <div class="error">{{ err }}</div>
@@ -31,16 +38,68 @@
 <fieldset id="legend">
     <legend> {{ _('Legend') }}</legend>
     <label>{{ _('Press F1 for Home') }}</label>
+    <label>{{ _('Press F2 for Retry the Card Reader') }}</label>
 </fieldset>
+<fieldset id="log">
+    <legend> {{ _('Log') }}</legend>
+</fieldset>
+{% endblock %}
+
+{% block js %}
 <script type="text/javascript" src="{{ url_for('static', filename='jquery.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='script.js') }}"></script>
 <script>
+var re_response = /[^E].*"card": "(.*)".*/;
+var get_card_uid_message = "{'mode': 'get_card_id'}"
+var index=4;
+
+function onMessage(evt)
+{
+    var card_id = evt.data.replace(re_response,"$1");
+    if ( evt.data.match(re_response) )
+    {
+        jQuery("input[name='card_uid']").val(card_id);
+        jQuery("input[name='balance']").focus();
+        websocket.close();
+    }
+    else
+    {
+        setTimeout(getCardUID,1000);
+    }
+    writeToScreen('<span style="color: blue;">RESPONSE: ' + evt.data+'</span>');
+
+    if ( index > 8 )
+    {
+        $("#log p").remove();
+        index = 0;
+    }
+    index++;
+}
+
 jQuery(document).ready(function(){
+
+    output = document.getElementById("log");
+    jQuery("button#reconnect").click(function(){ testWebSocket(); });
+    testWebSocket();
+
     jQuery('body, input').keypress(function(evt){
         if ( evt.keyCode == Keys._F1 )
         {
             window.location = "{{ url_for('index') }}";
         }
+        if ( evt.keyCode == Keys._F2 )
+        {
+            testWebSocket();
+        }
     });
+
+    jQuery("#card_uid").focus();
+    doSend(get_card_uid_message);
 });
+
+function getCardUID()
+{
+    websocket.send(get_card_uid_message);
+}
 </script>
+{% endblock %}

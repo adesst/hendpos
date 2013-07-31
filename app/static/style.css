@@ -1,0 +1,46 @@
+html, button, input { font-family: "Lucida Console"; font-size: 14px;}
+
+.pan {float: left; width: 100%;}
+.header { float: left; width: 100%; background-color: black; color: white; margin-bottom: 10px; height: 40px; text-align:center;margin-left: auto; margin-right: auto;}
+.header > p { margin-top: 10px;}
+.clear { clear: both;}
+
+.pan > .wrapper {width:95%; margin-left: auto; margin-right: auto;}
+.log { font-size: 12px; }
+.log > legend { font-size: 14px;}
+
+ul.flashes { background-color: white;
+    border-radius: 5px 5px 5px 5px;
+    color: green;
+    float: left;
+    height: 80px;
+    position: absolute;
+    right: 100px;
+    top: 0;
+    width: 320px;
+    list-style-type: none;
+    padding: 5px;
+    border: solid 5px grey;
+    z-index: 99;}
+
+ul.flashes > li {  }
+
+table {
+  border-spacing: 0;
+  border: 1px solid #ccc;
+  border-collapse: collapse;
+  padding: 1.5em .5em 1em .5em;
+  margin: 0em 0em 1em 0em
+}
+
+table th, table td , table tr {
+  padding: 2px 2px 2px 2px;
+  border-style: solid;
+  border-color: #999  ;
+}
+
+table td { border-width: 0px; border-color: #ccc; border-width : 0px 0px 0px 1px; }
+table th, table tr { border-width: 1px 1px 1px 1px; }
+table th { background-color: #bbb; }
+table tr:nth-child(odd) { background-color: #ddd; }
+table td.solid{ font-weight     : bold; background-color: #bbb; }

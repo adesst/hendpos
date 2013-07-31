@@ -2,24 +2,43 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
+    {% block title %}
+    <title>{{ _('HendPOS') }}</title>
+    {% endblock %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
 </head>
 <body>
-{% include 'default/flash.html' %}
-<div class="main_app" style="float: left; border: black solid 1px; border-right: none;">
-<p>{{ _("Welcome HenPos System") }}</p>
-<p id="status"></p>
-<button id="sell" type="button">{{ _('Sell [F1]') }}</button>
-<button id="top_up" type="button">{{ _('Top Up [F2]') }}</button>
-<button id="transactions" type="button">{{ _('Tx.Mutations [F3]') }}</button>
-<button id="new" type="button">{{ _('Register [F4]') }}</button>
-<button id="users" type="button">{{ _('Users [F9]') }}</button>
+<div class="pan">
+<div class="wrapper">
+    <div class="header"><p>{{ _('HendPOS') }}</p></div>
+    <div class="clear"></div>
+
+    {% block content %}
+    <div class="clear"></div>
+    <div id="content">
+        <fieldset class="main_app">
+            <legend>{{ _('Home') }}</legend>
+            <button id="sell" type="button">{{ _('Sell [F1]') }}</button>
+            <button id="top_up" type="button">{{ _('Top Up [F2]') }}</button>
+            <button id="transactions" type="button">{{ _('Tx.Mutations [F3]') }}</button>
+            <button id="new" type="button">{{ _('Register [F4]') }}</button>
+            <button id="users" type="button">{{ _('Users [F9]') }}</button>
+        </fieldset>
+        <div class="clear"></div>
+        <fieldset class="log">
+            <legend>{{ _('Log') }}</legend>
+            <div id="log"></div>
+            <div id="history"></div>
+        </fieldset>
+    </div>
+    <div class="clear"></div>
+    {% endblock %}
+</div> <!-- end of wrapper -->
 </div>
-<div class="log_window" style="float: left; border: black solid 1px; height: 500px; width: 800px; overflow: auto;">
-    <p> {{ _('Window Log') }} </p>
-    <div id="log"></div>
-    <div id="history"></div>
-</div>
+<div class="clear"></div>
 </body>
+
+{% block js %}
 <script type="text/javascript" src="{{ url_for('static', filename='jquery.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='script.js') }}"></script>
 <script>
@@ -49,28 +68,31 @@ $("#users").click(function(){
 
 jQuery("#history").load("{{ url_for('poslog_list') }}");
 
-jQuery('body, input').keypress(function(evt){
-    if ( evt.keyCode == Keys._F1 )
+jQuery('body, input').keydown(function(evt){
+    if ( evt.which == Keys._F1 )
     {
         window.location = "{{ url_for('transaction_pre_add', txtype=SELL) }}";
     }
-    if ( evt.keyCode == Keys._F2 )
+    if ( evt.which == Keys._F2 )
     {
         window.location = "{{ url_for('transaction_pre_add', txtype=TOP_UP) }}";
     }
-    if ( evt.keyCode == Keys._F3 )
+    if ( evt.which == Keys._F3 )
     {
         window.location = "{{ url_for('transaction_list') }}";
     }
-    if ( evt.keyCode == Keys._F4 )
+    if ( evt.which == Keys._F4 )
     {
         window.location = "{{ url_for('user_new') }}";
     }
-    if ( evt.keyCode == Keys._F9 )
+    if ( evt.which == Keys._F9 )
     {
         window.location = "{{ url_for('user_list') }}";
     }
 });
+
+
 </script>
-</script>
+{% endblock%}
+
 </html>

@@ -360,6 +360,7 @@ def transaction_view(id=None):
             return redirect(url_for('transaction_list'))
 
 @app.route('/transaction_list')
+@app.route('/transaction_list/')
 def transaction_list():
     mutations = db_session.query(Balance, User).filter(Balance.user_id==User.id)
     return render_template('default/transaction_list.html', mutations=mutations)

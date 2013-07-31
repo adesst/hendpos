@@ -1,3 +1,10 @@
+{% extends 'default/index.html' %}
+
+{% block title %}
+<title>{{ _('User List') }}</title>
+{% endblock %}
+
+{% block content %}
 {% include 'default/flash.html' %}
 <fieldset id="legend">
     <legend> {{ _('Legend') }}</legend>
@@ -25,12 +32,14 @@
                 <a target="_blank" href="{{ url_for('user_view', id=user['id']) }}">{{ _('View') }}</a>
                 <a target="_blank" href="{{ url_for('user_edit', id=user['id']) }}">{{ _('Edit') }}</a>
                 <a target="_blank" href="{{ url_for('user_delete', id=user['id']) }}">{{ _('Delete') }}</a>
-                <a target="_blank" href="{{ url_for('user_renew_card', id=user['id']) }}">{{ _('Renew Card') }}</a>
                 </td> 
         </tr>
     {% set index = index + 1 %}
     {% endfor %}
 </table>
+{% endblock %}
+
+{% block js %}
 <script type="text/javascript" src="{{ url_for('static', filename='jquery.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='script.js') }}"></script>
 <script>
@@ -43,3 +52,4 @@ jQuery(document).ready(function(){
     });
 });
 </script>
+{% endblock %}

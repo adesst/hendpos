@@ -1,3 +1,10 @@
+{% extends 'default/index.html' %}
+
+{% block title %}
+<title>{{ _('User View') }}</title>
+{% endblock %}
+
+{% block content %}
 {% include 'default/flash.html' %}
 {% for err in error_message: %}
     <div class="error">{{ err }}</div>
@@ -60,6 +67,9 @@
         {% endfor %}
     </table>
 </fieldset>
+{% endblock %}
+
+{% block js %}
 <script type="text/javascript" src="{{ url_for('static', filename='jquery.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='script.js') }}"></script>
 <script>
@@ -72,3 +82,4 @@ jQuery(document).ready(function(){
     });
 });
 </script>
+{% endblock %}

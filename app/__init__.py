@@ -17,7 +17,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///hendpos.db'
 app.secret_key = os.urandom(24)
 app.debug = True
 babel = Babel(app)
-logging.basicConfig(level=logging.DEBUG, format="%(asctime)s %(msg)s", filename="log.txt")
+#logging.basicConfig(level=logging.DEBUG, format="%(asctime)s %(msg)s", filename="log.txt")
 
 def login_required(url = None):
     def decorator(fn):

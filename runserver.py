@@ -32,7 +32,7 @@ class XWSGIServer(WSGIServer):
             logging.error('%s ' % ( traceback.print_exc))
 
 if __name__ == '__main__':
-    log = logging.basicConfig(level=logging.DEBUG, format="%(asctime)s %(msg)s", filename="log.txt")
+    logging.basicConfig(level=logging.DEBUG, format="%(asctime)s %(msg)s", filename="log.txt")
 
     class SimpleLog():
         def __init__(self):

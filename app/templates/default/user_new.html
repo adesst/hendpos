@@ -1,3 +1,10 @@
+{% extends 'default/index.html' %}
+
+{% block title %}
+<title>{{ _('User New') }}</title>
+{% endblock %}
+
+{% block content %}
 {% include 'default/flash.html' %}
 {% for err in error_message: %}
     <div class="error">{{ err }}</div>
@@ -23,14 +30,17 @@
     <label>{{ _('Press F2 for Retry the Card Reader') }}</label>
 </fieldset>
 <fieldset id="log">
-    <legend> {{ _('Card System') }}</legend>
+    <legend> {{ _('Log') }}</legend>
 </fieldset>
+{% endblock %}
+
+{% block js %}
 <script type="text/javascript" src="{{ url_for('static', filename='jquery.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='script.js') }}"></script>
 <script>
 var re_response = /[^E].*"card": "(.*)".*/;
 var get_card_uid_message = "{'mode': 'get_card_id'}"
-var index=0;
+var index=4;
 
 function onMessage(evt)
 {
@@ -47,7 +57,7 @@ function onMessage(evt)
     }
     writeToScreen('<span style="color: blue;">RESPONSE: ' + evt.data+'</span>');
 
-    if ( index > 100 )
+    if ( index > 8 )
     {
         $("#log p").remove();
         index = 0;
@@ -80,3 +90,4 @@ function getCardUID()
     websocket.send(get_card_uid_message);
 }
 </script>
+{% endblock %}

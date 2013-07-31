@@ -1,6 +1,11 @@
-{% include 'default/flash.html' %}
-<form action="{{ url_for('login') }}" method="post">
-    <input type="text" name="username" />
-
-    <input type="submit" value="Submit" />
-</form>
+<html>
+<body>
+<div class="pan">
+    {% include 'default/flash.html' %}
+    <form action="{{ url_for('login') }}" method="post">
+        <input type="text" name="username" />
+        <input type="submit" value="Submit" />
+    </form>
+</div>
+</body>
+</html>

@@ -1,6 +1,17 @@
+{% extends 'default/index.html' %}
+
+{% block title %}
+<title>{{ _('Transaction List') }}</title>
+{% endblock %}
+
+{% block content %}
 {% include 'default/flash.html' %}
 {% set Balance = 0 %}
 {% set User = 1 %}
+<fieldset id="legend">
+    <legend> {{ _('Legend') }}</legend>
+    <label>{{ _('Press F1 for Home') }}</label>
+</fieldset>
 <fieldset>
     <legend> History </legend>
     <table border="1" class="dedeq">
@@ -26,3 +37,19 @@
         {% endfor %}
     </table>
 </fieldset>
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript" src="{{ url_for('static', filename='jquery.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='script.js') }}"></script>
+<script>
+jQuery(document).ready(function(){
+    jQuery('body, input').keypress(function(evt){
+        if ( evt.keyCode == Keys._F1 )
+        {
+            window.location = "{{ url_for('index') }}";
+        }
+    });
+});
+</script>
+{% endblock %}

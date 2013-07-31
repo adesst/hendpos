@@ -77,4 +77,14 @@ function writeToScreen(message)
     output.appendChild(pre);
 }
 
+function hideFlashes()
+{
+    jQuery("ul.flashes").slideUp(1000);
+}
 
+jQuery(document).ready(function(){
+    if ( jQuery("ul.flashes").length > 0 )
+    {
+        setTimeout(hideFlashes,3000); 
+    }
+});
