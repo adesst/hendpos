@@ -78,7 +78,7 @@ def handle_websocket(ws):
                         str_reply = {'output' : 'XXXX'}
                         ws.send(json.dumps(str_reply))
                     else:
-                        str_reply = split_rule.split(out)[1].rstrip("\n")
+                        str_reply = split_rule.split(out)[1].rstrip("\n").rstrip("\r")
                         if error_pattern.match(str_reply) :
                             str_reply = {'output' : str_reply}
                         else:
