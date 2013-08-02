@@ -33,6 +33,7 @@ class XWSGIServer(WSGIServer):
             logging.error('%s ' % ( traceback.print_exc))
 
 if __name__ == '__main__':
+    print 'Initializing...'
     if os.name == 'nt':
         print 'To Close this application just close this window.'
 
@@ -45,7 +46,6 @@ if __name__ == '__main__':
             logging.info(msg.rsplit("\n"))
 
     try:
-        print 'Initializing...'
         http_server = XWSGIServer(('',5000), my_app, handler_class=WebSocketHandler, log=SimpleLog())
         print 'Show time :D'
         http_server.serve_forever()
