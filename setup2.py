@@ -7,7 +7,8 @@ setup(
     name = 'hendpos',
     version = '1.0',
     install_requires = [
-        'Mysql-python==1.2.3',
+        #'Mysql-python==1.2.3',
+        'dateutils',
         'Flask-Babel==0.8',
         'Flask-sqlalchemy==0.16',
         'Flask-WTF==0.8.2',

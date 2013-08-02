@@ -1,3 +1,4 @@
+import sys
 import traceback
 import logging
 import json
@@ -10,6 +11,7 @@ from gevent import sleep
 
 split_rule = re.compile('::')
 error_pattern = re.compile('^Error')
+PATH_RFIDIOT = sys.path[0] + "/RFIDIOt"
 
 AUTH_BLOCK_4TH = 'FF8600000501000460'
 AUTH_BLOCK = 'FF860000050100'
@@ -47,7 +49,7 @@ def handle_websocket(ws):
                 if 'check_uid' == d['mode'] :
                     res_call = subprocess.Popen(
                                     ["python",
-                                    "/opt/flask/flask-websocket/app/RFIDIOt/card_read_uid.py",
+                                    PATH_RFIDIOT + "/card_read_uid.py",
                                     " -uid "],
                                     stdout=subprocess.PIPE)
                     out, error = res_call.communicate()
@@ -68,7 +70,7 @@ def handle_websocket(ws):
                 elif 'get_card_id' == d['mode'] :
                     res_call = subprocess.Popen(
                                     ["python",
-                                    "/opt/flask/flask-websocket/app/RFIDIOt/card_read_id.py",
+                                    PATH_RFIDIOT + "/card_read_id.py",
                                     " --uid"],
                                     stdout=subprocess.PIPE)
                     out, error = res_call.communicate()

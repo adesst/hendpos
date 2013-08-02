@@ -24,5 +24,5 @@ def init_db():
             {'group_id' : 80, 'group_name' : 'Staff'},
             {'group_id' : 90, 'group_name' : 'Registered'},
         ]
-        db_session.execute(UserGroup.__table__.insert(), groups)
+        db_session.execute(models.UserGroup.__table__.insert(), groups)
 
