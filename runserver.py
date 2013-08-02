@@ -47,6 +47,8 @@ if __name__ == '__main__':
 
     try:
         http_server = XWSGIServer(('',5000), my_app, handler_class=WebSocketHandler, log=SimpleLog())
+        print 'You can access the application using Firefox (recommended)'
+        print 'And type the url to http://localhost:5000/'
         print 'Show time :D'
         http_server.serve_forever()
     except Exception as e:
