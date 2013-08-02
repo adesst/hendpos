@@ -9,6 +9,8 @@ html, button, input { font-family: "Lucida Console"; font-size: 14px;}
 .log { font-size: 12px; }
 .log > legend { font-size: 14px;}
 
+fieldset > div > label { width: 150px; float: left; margin-top: 3px;}
+
 ul.flashes { background-color: white;
     border-radius: 5px 5px 5px 5px;
     color: green;
