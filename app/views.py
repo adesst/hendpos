@@ -2,6 +2,7 @@ from flask import render_template, request, session, flash, redirect
 from app import *
 from flask.ext.babel import lazy_gettext
 import datetime
+import math
 from dateutil import parser
 import traceback, logging
 import copy
@@ -12,6 +13,48 @@ REGISTERED_USER = 90
 TOP_UP = '1'
 SELL = '11'
 ATTENDANCE = '11'
+
+class Pagination(object):
+
+    def __init__(self, page, per_page, total_count):
+        self.page = page
+        self.per_page = per_page
+        self.total_count = total_count
+        self.offset = (page - 1) * per_page
+
+    @property
+    def pages(self):
+        return int(math.ceil(self.total_count / float(self.per_page)))
+
+    @property
+    def has_prev(self):
+        return self.page > 1
+
+    @property
+    def has_next(self):
+        return self.page < self.pages
+
+    def iter_pages(self, left_edge=2, left_current=2,
+                   right_current=5, right_edge=2):
+        last = 0
+        for num in xrange(1, self.pages + 1):
+            if num <= left_edge or \
+               (num > self.page - left_current - 1 and \
+                num < self.page + right_current) or \
+               num > self.pages - right_edge:
+                if last + 1 != num:
+                    yield None
+                yield num
+                last = num
+
+def url_for_other_page(page, **kwargs):
+    args = request.view_args.copy()
+    args['page'] = page
+    if kwargs :
+        args.update( kwargs )
+    return url_for(request.endpoint, **args)
+
+app.jinja_env.globals['url_for_other_page'] = url_for_other_page
 
 def pop_up_link(link_url, link_string):
     ret_str = '''<a href="%s" >%s</a>''' %( link_url, link_string)
@@ -359,11 +402,69 @@ def transaction_view(id=None):
             flash(lazy_gettext('Error: Transaction %s is not exists' % id))
             return redirect(url_for('transaction_list'))
 
-@app.route('/transaction_list')
-@app.route('/transaction_list/')
-def transaction_list():
-    mutations = db_session.query(Balance, User).filter(Balance.user_id==User.id)
-    return render_template('default/transaction_list.html', mutations=mutations)
+@app.route('/transaction_rekap/', methods=['GET','POST'])
+def transaction_rekap():
+    criteration = []
+    if not request.form:
+        return render_template('default/transaction_rekap.html', form=None)
+    if request.form :
+        form_data = dict(request.form.items())
+        if form_data['from_date'] != '' and form_data['to_date'] != '':
+            criteration.append(Balance.tr_date>=parser.parse(form_data['from_date']))
+            criteration.append(Balance.tr_date<=parser.parse(form_data['to_date']))
+        else:
+            criteration.append(Balance.tr_date>=parser.parse(datetime.datetime.now().strftime('%Y-%m-%d')))
+            criteration.append(Balance.tr_date>=parser.parse(datetime.datetime.now().strftime('%Y-%m-%d')))
+    if id == None:
+        flash(lazy_gettext('Error: No user ID specified, redirecting to Transaction List'))
+        return redirect(url_for('transaction_list'))
+    else:
+        mutations = db_session.query(Balance,User).filter(*criteration)
+        if mutations:
+            return render_template('default/transaction_rekap.html', form=form_data, mutations=mutations)
+        else:
+            flash(lazy_gettext('Error: Transaction %s is not exists' % id))
+            return redirect(url_for('transaction_rekap'))
+
+@app.route('/transaction_list/', defaults={'limit': 10, 'page' : 1}, methods=['GET','POST'])
+@app.route('/transaction_list/<int:limit>/<int:page>/', methods=['GET','POST'])
+@app.route('/transaction_list/<int:limit>/<int:page>/<from_date>/<to_date>', methods=['GET','POST'])
+def transaction_list(limit,page, from_date='', to_date=''):
+    criteration = and_(*[
+        Balance.user_id > 0,
+        Balance.status != 1,
+        User.status != 1,
+        TxType.status != 1,
+    ])
+    if request.form :
+        form_data = dict(request.form.items())
+        if form_data['from_date'] != '' and form_data['to_date'] != '':
+            criteration.append(Balance.tr_date>=parser.parse(form_data['from_date']))
+            criteration.append(Balance.tr_date<=parser.parse(form_data['to_date']))
+        else:
+            criteration.append(Balance.tr_date>=parser.parse(datetime.datetime.now().strftime('%Y-%m-%d')))
+            criteration.append(Balance.tr_date>=parser.parse(datetime.datetime.now().strftime('%Y-%m-%d')))
+    else:
+        if from_date != '' and to_date != '':
+            form_data = {'from_date' : from_date, 'to_date' : to_date }
+            criteration.append(Balance.tr_date>=parser.parse(form_data['from_date']))
+            criteration.append(Balance.tr_date<=parser.parse(form_data['to_date']))
+        else:
+            form_data = None
+            criteration.append(Balance.tr_date>=parser.parse(datetime.datetime.now().strftime('%Y-%m-%d')))
+            criteration.append(Balance.tr_date>=parser.parse(datetime.datetime.now().strftime('%Y-%m-%d')))
+    count = db_session.query(Balance, User, TxType). \
+        join(User). \
+        join(TxType).filter(criteration).count()
+    pagination = Pagination( page, limit, count)
+    mutations = db_session.query(Balance,User, TxType). \
+        join(User). \
+        join(TxType).filter(criteration).limit(limit).offset(pagination.offset)
+    return render_template(
+        'default/transaction_list.html',
+        mutations=mutations,
+        pagination=pagination,
+        form=form_data)
 
 @app.route('/poslog/list/<limit>', methods=['GET','POST'])
 @app.route('/poslog/list', methods=['GET','POST'])
